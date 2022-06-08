@@ -5,6 +5,10 @@ import Main from './layout/Main';
 import routes from './routes';
 import store from './store';
 
+import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer } from 'react-toastify';
+import Default from './layout/Default';
+
 function App() {
 	return (
 		<>
@@ -29,12 +33,33 @@ function App() {
 											</Auth>
 										</Route>
 									);
+								default:
+									return (
+										<Route exact path={route.path}>
+											<Default>
+												<route.component />
+											</Default>
+										</Route>
+									);
 							}
 						})}
-						<Redirect to="/"/>
+						<Redirect to='/' />
 					</Switch>
 				</BrowserRouter>
 			</Provider>
+			<ToastContainer
+				position='top-right'
+				autoClose={5000}
+				hideProgressBar={false}
+				newestOnTop={false}
+				closeOnClick
+				rtl={false}
+				pauseOnFocusLoss
+				draggable
+				pauseOnHover
+			/>
+			{/* Same as */}
+			<ToastContainer />
 		</>
 	);
 }

@@ -1,12 +1,16 @@
-import AuthView from '../views/auth/AuthView';
+import Login from '../views/auth/Login';
+import Logout from '../views/auth/Logout';
 import MainView from '../views/MainView';
-
 
 let routes = [
 	{
-		path: '/auth',
-		component: AuthView,
+		path: '/auth/login',
+		component: Login,
 		layout: 'auth',
+	},
+	{
+		path: '/auth/logout',
+		component: Logout,
 	},
 	{
 		path: '/',
