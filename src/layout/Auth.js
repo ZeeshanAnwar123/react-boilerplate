@@ -6,7 +6,7 @@ const Auth = props => {
 	let history = useHistory();
 	let authUser = useSelector(state => state.authUser);
 	const checkAuth = () => {
-		if (authUser.uid != null) history.push('/');
+		if (authUser.uid != null) history.push('/learn');
 	};
 	useEffect(() => {
 		checkAuth();

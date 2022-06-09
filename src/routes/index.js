@@ -1,6 +1,6 @@
 import Login from '../views/auth/Login';
 import Logout from '../views/auth/Logout';
-import MainView from '../views/MainView';
+import Learn from '../views/Learn';
 
 let routes = [
 	{
@@ -13,8 +13,8 @@ let routes = [
 		component: Logout,
 	},
 	{
-		path: '/',
-		component: MainView,
+		path: '/learn',
+		component: Learn,
 		layout: 'main',
 	},
 ];

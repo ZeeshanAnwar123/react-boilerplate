@@ -5,6 +5,7 @@ import user_details from '../assets/img/user_details.svg';
 import content from '../assets/img/content.svg';
 import settings from '../assets/img/settings.svg';
 import { Link } from 'react-router-dom';
+import { useEffect } from 'react';
 const Sidebar = () => {
 	return (
 		<div className='sidebar'>
