@@ -61,6 +61,16 @@ $weights: 300 400 500 600 700;
 	@media (max-width: 991.98px) {
 		left: -100%;
 	}
+	&__text{
+		font-weight: 600;
+		font-size: 17px;
+		color: #a6a6a6;
+	}
+	&__sub-text{
+		font-size: 22px;
+		font-weight: 300;
+		color: #a6a6a6;
+	}
 	&__logo {
 		width: 160px;
 		height: 160px;
@@ -105,6 +115,9 @@ $weights: 300 400 500 600 700;
 	width: 90%;
 	border-radius: 5px;
 	box-shadow: 0 0 150px rgba(0, 0, 0, 0.1);
+	&__logo{
+		max-width: 120px;
+	}
 }
 .top-bar {
 	&__button {
@@ -122,12 +135,32 @@ $weights: 300 400 500 600 700;
 		color: #a6a6a6 !important;
 	}
 }
+.color-box {
+	width: 13px;
+	height: 13px;
+	border-radius: 1px;
+	border: 0 !important;
+}
 .upload {
-	min-height: 350px;
+	height: 350px;
+	border: 10px solid #fff;
+	box-sizing: border-box;
+	overflow: hidden;
 	cursor: pointer;
 	&__logo {
 		width: 50px;
 		height: 50px;
+	}
+}
+.publish-btn {
+	width: 225px;
+	height: 42px;
+	background-color: #ff808b;
+	color: #fff;
+	border: 0;
+	box-sizing: border-box;
+	&:hover {
+		background-color: #ff808bcc;
 	}
 }
 .category-dropdown {
@@ -139,7 +172,6 @@ $weights: 300 400 500 600 700;
 	align-items: center;
 	box-sizing: border-box;
 	box-shadow: 0px 4px 4px 0px #0000001a;
-	cursor: pointer;
 	user-select: none;
 	&__icon {
 		width: 40px;
@@ -147,7 +179,10 @@ $weights: 300 400 500 600 700;
 		align-items: center;
 		height: 100%;
 		justify-content: center;
+		border: none;
+		color: #ff808b;
 		border-left: 2px solid #ff808b;
+		background-color: transparent;
 	}
 	&__menu {
 		min-height: 10px;
@@ -184,7 +219,7 @@ $weights: 300 400 500 600 700;
 }
 .tutorial-card {
 	background-color: #fff;
-	min-height: 120px;
+	height: 120px;
 	width: calc(100% - 20px);
 	box-shadow: 0px 3px 90px rgba(141, 27, 255, 0.07);
 	border-radius: 0px 35px 0px 0px;
@@ -195,7 +230,7 @@ $weights: 300 400 500 600 700;
 		flex-shrink: 0;
 		filter: drop-shadow(0px 0px 100px rgba(0, 0, 0, 0.05));
 		border-radius: 0px 35px 0px 0px;
-		object-fit: contain;
+		object-fit: cover;
 	}
 	&__tag {
 		font-size: 8px;
@@ -235,4 +270,7 @@ $weights: 300 400 500 600 700;
 	border-radius: 9px;
 	cursor: pointer;
 	user-select: none;
+}
+.cursor-pointer {
+	cursor: pointer !important;
 }

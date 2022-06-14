@@ -43,7 +43,7 @@ function App() {
 									);
 							}
 						})}
-						<Redirect to='/' />
+						<Redirect to='/learn' />
 					</Switch>
 				</BrowserRouter>
 			</Provider>

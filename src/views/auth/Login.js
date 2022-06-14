@@ -1,7 +1,7 @@
 import { useDispatch } from 'react-redux';
 import { login } from '../../store/actions/authAction';
 import { Button, Form, FormGroup, Input, Label, Spinner } from 'reactstrap';
-import LogoCropped from '../../assets/img/logo_cropped.png';
+import Logo from '../../assets/img/logo.png';
 import { useState } from 'react';
 const Login = props => {
 	let dispatch = useDispatch();
@@ -22,7 +22,7 @@ const Login = props => {
 		<>
 			<div className='auth-form p-4 p-sm-5'>
 				<div className='d-flex justify-content-center'>
-					<img src={LogoCropped} />
+					<img src={Logo} className='auth-form__logo' />
 				</div>
 				<hr />
 				<h5 className='font-weight-bold mt-4'>Login</h5>

@@ -1,32 +1,38 @@
 import Logo from '../assets/img/logo.png';
-import dashboard from '../assets/img/dashboard.svg';
-import meetings from '../assets/img/meetings.svg';
-import user_details from '../assets/img/user_details.svg';
-import content from '../assets/img/content.svg';
-import settings from '../assets/img/settings.svg';
+import calculator from '../assets/img/calculator.png';
+import articles from '../assets/img/articles.png';
+import tests from '../assets/img/tests.png';
+import learn from '../assets/img/learn.png';
+import settings from '../assets/img/settings.png';
 import { Link } from 'react-router-dom';
 import { useEffect } from 'react';
 const Sidebar = () => {
 	return (
 		<div className='sidebar'>
-			<div className='d-flex'>
+			<div className='d-flex flex-column justify-content-center align-items-center'>
 				<img src={Logo} className='sidebar__logo' />
+				<h6 className='sidebar__text'>
+					<b>Generational</b>
+				</h6>
+				<h5 className='sidebar__sub-text'>
+					<span>Dashboard</span>
+				</h5>
+			</div>
+			<div className='sidebar__item mt-3'>
+				<img className='sidebar__item__image' src={calculator} />
+				<span className='sidebar__item__text'>Calculators</span>
 			</div>
 			<div className='sidebar__item'>
-				<img className='sidebar__item__image' src={dashboard} />
-				<span className='sidebar__item__text'>Dashboard</span>
+				<img className='sidebar__item__image' src={articles} />
+				<span className='sidebar__item__text'>Articles</span>
 			</div>
 			<div className='sidebar__item'>
-				<img className='sidebar__item__image' src={meetings} />
-				<span className='sidebar__item__text'>Meetings</span>
+				<img className='sidebar__item__image' src={tests} />
+				<span className='sidebar__item__text'>Tests</span>
 			</div>
 			<div className='sidebar__item'>
-				<img className='sidebar__item__image' src={user_details} />
-				<span className='sidebar__item__text'>User Details</span>
-			</div>
-			<div className='sidebar__item'>
-				<img className='sidebar__item__image' src={content} />
-				<span className='sidebar__item__text'>Content</span>
+				<img className='sidebar__item__image' src={learn} />
+				<span className='sidebar__item__text'>Learn</span>
 			</div>
 			<div className='sidebar__item'>
 				<img className='sidebar__item__image' src={settings} />
