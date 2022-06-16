@@ -262,8 +262,22 @@ $weights: 300 400 500 600 700;
 		justify-content: center;
 		cursor: pointer;
 		box-shadow: -3px -3px 50px 0px #8d1bff12;
-		top: 50%;
-		transform: translateY(-50%);
+		top: 30%;
+		transform: translateY(-30%);
+	}
+	&__delete {
+		width: 40px;
+		height: 40px;
+		border-radius: 50px;
+		right: -20px;
+		background-color: #fff;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		cursor: pointer;
+		box-shadow: -3px -3px 50px 0px #8d1bff12;
+		top: 90%;
+		transform: translateY(-90%);
 	}
 }
 .new-post-btn {

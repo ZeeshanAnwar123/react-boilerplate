@@ -1,6 +1,17 @@
-import { Button, Col, Form, FormGroup, Input, Row, Spinner } from 'reactstrap';
+import {
+	Button,
+	Col,
+	Form,
+	FormGroup,
+	Input,
+	Row,
+	Spinner,
+	Modal,
+	ModalHeader,
+	ModalBody,
+	ModalFooter,
+} from 'reactstrap';
 import Upload from '../assets/img/upload.png';
-import DropZone from 'react-dropzone';
 import CategoryDropdown from '../components/CategoryDropdown';
 import { useState } from 'react';
 import TimeSquare from '../assets/img/Time Square.png';
@@ -11,10 +22,12 @@ import { useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 import {
 	addCourse,
+	deleteCourse,
 	editCourse,
 	fetchCourses,
 } from '../store/actions/courseAction';
 import firebase from '../config/firebase';
+import FilePicker from '../components/FilePicker';
 
 const Learn = props => {
 	let [course, setCourse] = useState({
@@ -23,6 +36,7 @@ const Learn = props => {
 		title: '',
 	});
 	let [isEditMode, setIsEditMode] = useState(false);
+	let [isDeleteModal, setIsDeleteModal] = useState(false);
 	let _course = useSelector(state => state.course);
 	let [tutorials, setTutorials] = useState([
 		{
@@ -56,6 +70,8 @@ const Learn = props => {
 			videoUrl: '',
 		},
 	]);
+	let [deleteLoading, setDeleteLoading] = useState(false);
+	let [deleteCourseData, setDeleteCourseData] = useState({});
 	let [publishLoading, setPublishLoading] = useState(false);
 	let dispatch = useDispatch();
 
@@ -119,6 +135,7 @@ const Learn = props => {
 			thumbnail: '',
 			title: '',
 		});
+
 		setTutorials([
 			{
 				calculatorType: '',
@@ -197,48 +214,11 @@ const Learn = props => {
 				</div>
 				<Row className='mt-4'>
 					<Col md='6'>
-						<DropZone onDrop={handleCourseImage}>
-							{({
-								getRootProps,
-								getInputProps,
-								isDragActive,
-							}) => (
-								<div
-									{...getRootProps()}
-									className='rounded w-100 bg-white upload d-flex align-items-center justify-content-center'
-								>
-									{course.thumbnail ? (
-										<div className='d-flex w-100 h-100'>
-											<img
-												className='w-100 h-100'
-												style={{ objectFit: 'cover' }}
-												src={
-													typeof course.thumbnail ==
-													'string'
-														? course.thumbnail
-														: URL.createObjectURL(
-																course.thumbnail
-														  )
-												}
-											/>
-										</div>
-									) : (
-										<div className='d-flex flex-column justify-content-center align-items-center'>
-											<img
-												src={Upload}
-												className='upload__logo'
-											/>
-											<span className='fs-17 fw-500 mt-2 text-A6A6A6'>
-												{isDragActive
-													? 'Drop Here'
-													: 'Upload Image'}
-											</span>
-											<input {...getInputProps()} />
-										</div>
-									)}
-								</div>
-							)}
-						</DropZone>
+						<FilePicker
+							value={course.thumbnail}
+							placeholder='Upload Image'
+							onChange={handleCourseImage}
+						/>
 					</Col>
 					<Col md='6'>
 						<FormGroup>
@@ -283,56 +263,13 @@ const Learn = props => {
 					>
 						<Col md='6'>
 							<div className='mt-4'>
-								<DropZone
-									onDrop={files =>
+								<FilePicker
+									onChange={files =>
 										handleTutorialFile(files, key)
 									}
-								>
-									{({
-										getRootProps,
-										getInputProps,
-										isDragActive,
-									}) => (
-										<div
-											{...getRootProps()}
-											className='rounded w-100 bg-white upload d-flex align-items-center justify-content-center'
-										>
-											{tutorial.primaryImage ? (
-												<div className='d-flex w-100 h-100'>
-													<img
-														className='w-100 h-100'
-														style={{
-															objectFit: 'cover',
-														}}
-														src={
-															typeof tutorial.primaryImage ==
-															'string'
-																? tutorial.primaryImage
-																: URL.createObjectURL(
-																		tutorial.primaryImage
-																  )
-														}
-													/>
-												</div>
-											) : (
-												<div className='d-flex flex-column justify-content-center align-items-center'>
-													<img
-														src={Upload}
-														className='upload__logo'
-													/>
-													<span className='fs-17 fw-500 mt-2 text-A6A6A6'>
-														{isDragActive
-															? 'Drop Here'
-															: 'Upload Image or Video'}
-													</span>
-													<input
-														{...getInputProps()}
-													/>
-												</div>
-											)}
-										</div>
-									)}
-								</DropZone>
+									value={tutorial.primaryImage}
+									placeholder='Upload Image or Video'
+								/>
 								<FormGroup className='mt-3'>
 									<Input
 										required
@@ -349,6 +286,27 @@ const Learn = props => {
 										}
 									/>
 								</FormGroup>
+								{typeof tutorial.videoUrl == 'string' && (
+									<FormGroup>
+										<Input
+											type='text'
+											className='border-0'
+											placeholder='YouTube Video URL'
+											value={tutorial.videoUrl}
+											readOnly={
+												typeof tutorial.videoUrl !=
+												'string'
+											}
+											onChange={e => {
+												setTutorials(prevState => {
+													prevState[key].videoUrl =
+														e.target.value;
+													return [...prevState];
+												});
+											}}
+										/>
+									</FormGroup>
+								)}
 							</div>
 						</Col>
 						<Col md='6'>
@@ -408,6 +366,7 @@ const Learn = props => {
 				))}
 				<div className='d-flex w-100 my-4'>
 					<button
+						type='button'
 						disabled={publishLoading ? 'disabled' : ''}
 						className='add-button ml-auto mr-3'
 						onClick={e =>
@@ -521,6 +480,18 @@ const Learn = props => {
 									>
 										<i className='fa fa-edit'></i>
 									</div>
+									<div
+										className='position-absolute tutorial-card__delete'
+										onClick={() => {
+											let _tutorials =
+												courseItem.tutorials;
+											delete courseItem.tutorials;
+											setDeleteCourseData(courseItem);
+											setIsDeleteModal(true);
+										}}
+									>
+										<i className='fa fa-trash'></i>
+									</div>
 								</div>
 							</Col>
 						))}
@@ -587,6 +558,35 @@ const Learn = props => {
 					</Row>
 				)}
 			</div>
+			<Modal
+				centered
+				isOpen={isDeleteModal}
+				toggle={() => setIsDeleteModal(prevState => !prevState)}
+			>
+				<ModalHeader
+					toggle={() => setIsDeleteModal(prevState => !prevState)}
+				>
+					Confirmation
+				</ModalHeader>
+				<ModalBody>
+					Do you really want to delete {deleteCourseData.title} course
+					record?
+				</ModalBody>
+				<ModalFooter>
+					<Button color='outline-dark'>Cancel</Button>
+					<Button
+						color='success'
+						onClick={async () => {
+							setDeleteLoading(true);
+							await dispatch(deleteCourse(deleteCourseData.id));
+							setIsDeleteModal(false);
+							setDeleteLoading(false);
+						}}
+					>
+						{deleteLoading ? <Spinner size='sm' /> : 'Delete'}
+					</Button>
+				</ModalFooter>
+			</Modal>
 		</>
 	);
 };

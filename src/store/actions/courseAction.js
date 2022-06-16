@@ -20,7 +20,7 @@ export const addCourse = payload => async dispatch => {
 		tutorial.documentId = documentId;
 		tutorial.timeInterval = new Date().getTime();
 		classes.push(documentId);
-		if (tutorial.videoUrl) {
+		if (tutorial.videoUrl && typeof tutorial.videoUrl != 'string') {
 			let ref = firebase.storage().ref('article').child('video');
 			tutorial.videoUrl = await upload(
 				documentId,
@@ -106,4 +106,26 @@ export const fetchCourses = () => async dispatch => {
 		}
 		dispatch({ type: FETCH_COURSES, payload: courses });
 	});
+};
+export const deleteCourse = courseId => async dispatch => {
+	let course = await Learn.doc(courseId).get();
+	let courseData = course.data();
+	let classes = courseData.classes;
+	for (let tutorial of classes) {
+		let content = await Content.doc(tutorial).get();
+		let contentData = content.data();
+		let primaryImage = contentData.primaryImage;
+		let videoUrl = contentData.videoUrl;
+		if (primaryImage.includes('firebasestorage')) {
+			// await firebase.storage().refFromURL(primaryImage).delete();
+		}
+		if (videoUrl.includes('firebasestorage')) {
+			// await firebase.storage().refFromURL(videoUrl).delete();
+		}
+		await Content.doc(tutorial).delete();
+	}
+	if (courseData.thumbnail.includes('firebasestorage')) {
+		// await firebase.storage().refFromURL(courseData.thumbnail).delete();
+	}
+	await Learn.doc(courseId).delete();
 };
