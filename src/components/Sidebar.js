@@ -22,18 +22,18 @@ const Sidebar = () => {
 				<img className='sidebar__item__image' src={calculator} />
 				<span className='sidebar__item__text'>Calculators</span>
 			</div>
-			<div className='sidebar__item'>
+			<Link to='/articles' className='sidebar__item'>
 				<img className='sidebar__item__image' src={articles} />
 				<span className='sidebar__item__text'>Articles</span>
-			</div>
+			</Link>
 			<div className='sidebar__item'>
 				<img className='sidebar__item__image' src={tests} />
 				<span className='sidebar__item__text'>Tests</span>
 			</div>
-			<div className='sidebar__item'>
+			<Link to='/learn' className='sidebar__item'>
 				<img className='sidebar__item__image' src={learn} />
 				<span className='sidebar__item__text'>Learn</span>
-			</div>
+			</Link>
 			<div className='sidebar__item'>
 				<img className='sidebar__item__image' src={settings} />
 				<span className='sidebar__item__text'>Settings</span>

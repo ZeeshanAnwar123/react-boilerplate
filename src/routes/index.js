@@ -1,6 +1,7 @@
 import Login from '../views/auth/Login';
 import Logout from '../views/auth/Logout';
 import Learn from '../views/Learn';
+import Articles from '../views/Articles';
 
 let routes = [
 	{
@@ -15,6 +16,11 @@ let routes = [
 	{
 		path: '/learn',
 		component: Learn,
+		layout: 'main',
+	},
+	{
+		path: '/articles',
+		component: Articles,
 		layout: 'main',
 	},
 ];

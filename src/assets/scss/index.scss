@@ -20,7 +20,7 @@ body {
 	overflow: hidden !important;
 }
 $sizes: 12 13 14 15 16 17 18 19 20 21 22 23 24 25;
-$colors: '#A6A6A6' '#111026' '#17002F';
+$colors: '#A6A6A6' '#111026' '#17002F' '#FF808B';
 @each $color in $colors {
 	$string: str-replace($color, '#', '');
 	.text-#{$string} {
@@ -45,6 +45,12 @@ $weights: 300 400 500 600 700;
 		}
 	}
 }
+body{
+	accent-color: #FF808B;
+}
+.form-control[type="radio"]{
+	border: 0 !important;
+}
 .sidebar {
 	flex-shrink: 0;
 	width: 240px;
@@ -61,12 +67,12 @@ $weights: 300 400 500 600 700;
 	@media (max-width: 991.98px) {
 		left: -100%;
 	}
-	&__text{
+	&__text {
 		font-weight: 600;
 		font-size: 17px;
 		color: #a6a6a6;
 	}
-	&__sub-text{
+	&__sub-text {
 		font-size: 22px;
 		font-weight: 300;
 		color: #a6a6a6;
@@ -84,10 +90,13 @@ $weights: 300 400 500 600 700;
 		padding: 0 20px;
 		height: 45px;
 		cursor: pointer;
-		color: #a2a2c2 !important;
 		text-decoration: none !important;
 		&:hover {
 			background-color: #f5f5fb;
+		}
+		&__text {
+			color: #a2a2c2 !important;
+			text-decoration: none !important;
 		}
 		&__image {
 			width: 20px;
@@ -115,7 +124,7 @@ $weights: 300 400 500 600 700;
 	width: 90%;
 	border-radius: 5px;
 	box-shadow: 0 0 150px rgba(0, 0, 0, 0.1);
-	&__logo{
+	&__logo {
 		max-width: 120px;
 	}
 }
