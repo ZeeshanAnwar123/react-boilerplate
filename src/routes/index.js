@@ -3,6 +3,7 @@ import Logout from '../views/auth/Logout';
 import Learn from '../views/Learn';
 import Articles from '../views/Articles';
 import Calculators from '../views/Calculators';
+import Tests from '../views/Tests';
 
 let routes = [
 	{
@@ -31,7 +32,7 @@ let routes = [
 	},
 	{
 		path: '/tests',
-		component: Calculators,
+		component: Tests,
 		layout: 'main',
 	},
 ];

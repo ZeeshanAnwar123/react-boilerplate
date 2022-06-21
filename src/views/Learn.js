@@ -203,7 +203,7 @@ const Learn = props => {
 		});
 	};
 	useEffect(() => {
-		dispatch(fetchCategories());
+		dispatch(fetchCategories({ contentType: 3, section: 3 }));
 		dispatch(fetchCourses());
 	}, []);
 	return (
