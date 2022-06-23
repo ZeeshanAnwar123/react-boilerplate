@@ -183,6 +183,14 @@ const Personal = props => {
 	const handleTutorialFile = (files, key) => {
 		let possibleImageTypes = ['gif', 'png', 'bmp', 'jpeg', 'jpg'];
 		let possibleVideoTypes = ['mp4', 'mov', 'wmv', 'flv', 'avi', 'webm'];
+		if (files.length == 0) {
+			setTutorials(prevState => {
+				prevState[key].primaryImage = '';
+				prevState[key].videoUrl = '';
+				return [...prevState];
+			});
+			return;
+		}
 		if (files.length != 1) {
 			toast.error('Only 1 file is allowed!!!');
 			return;
@@ -304,7 +312,7 @@ const Personal = props => {
 											required
 											type='text'
 											className='border-0'
-											placeholder='Title of Tutorial'
+											placeholder='Title'
 											value={tutorial.title}
 											onChange={e => {
 												setTutorials(prevState => {

@@ -79,6 +79,13 @@ const Learn = props => {
 
 	const handleCourseImage = files => {
 		let possibleFileTypes = ['gif', 'png', 'bmp', 'jpeg', 'jpg'];
+		if (files.length == 0) {
+			setCourse(prevState => {
+				prevState.thumbnail = '';
+				return { ...prevState };
+			});
+			return;
+		}
 		if (files.length != 1) {
 			toast.error('Only 1 file is allowed!!!');
 			return;
@@ -172,6 +179,14 @@ const Learn = props => {
 	const handleTutorialFile = (files, key) => {
 		let possibleImageTypes = ['gif', 'png', 'bmp', 'jpeg', 'jpg'];
 		let possibleVideoTypes = ['mp4', 'mov', 'wmv', 'flv', 'avi', 'webm'];
+		if (files.length == 0) {
+			setTutorials(prevState => {
+				prevState[key].primaryImage = '';
+				prevState[key].videoUrl = '';
+				return [...prevState];
+			});
+			return;
+		}
 		if (files.length != 1) {
 			toast.error('Only 1 file is allowed!!!');
 			return;
@@ -226,7 +241,7 @@ const Learn = props => {
 								type='text'
 								required
 								className='border-0'
-								placeholder='Title of Post'
+								placeholder='Title'
 								value={course.title}
 								onChange={e =>
 									setCourse(prevState => {
@@ -331,7 +346,7 @@ const Learn = props => {
 									required
 									type='text'
 									className='border-0'
-									placeholder='Title of Tutorial'
+									placeholder='Title'
 									value={tutorial.title}
 									onChange={e => {
 										setTutorials(prevState => {

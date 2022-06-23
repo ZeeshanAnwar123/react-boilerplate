@@ -20,7 +20,7 @@ body {
 	overflow: hidden !important;
 }
 $sizes: 12 13 14 15 16 17 18 19 20 21 22 23 24 25;
-$colors: '#A6A6A6' '#111026' '#17002F' '#FF808B';
+$colors: '#A6A6A6' '#111026' '#17002F' '#FF808B' '#A2A2C2';
 @each $color in $colors {
 	$string: str-replace($color, '#', '');
 	.text-#{$string} {
@@ -160,6 +160,11 @@ body {
 		width: 50px;
 		height: 50px;
 	}
+	&-container {
+		height: 205px;
+		background-color: #f5f5fb;
+		cursor: pointer;
+	}
 }
 .publish-btn {
 	width: 225px;
@@ -184,7 +189,7 @@ body {
 			border: 0;
 			outline: 0 !important;
 			box-shadow: 0 !important;
-			&:focus{
+			&:focus {
 				box-shadow: none !important;
 			}
 		}
@@ -384,5 +389,24 @@ body {
 			border: 1px solid #ff808b;
 			color: #ff808b !important;
 		}
+	}
+}
+.image-icon{
+	width:45px;
+	height: 45px;
+	background-color: #ffffff;
+	color:#A2A2C2;
+	border-radius: 50%;
+	box-shadow: 0 0 5px rgba(0,0,0,0.4);
+	top:10px;
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	&--first{
+		left: 10px;
+	}
+	&--second{
+		right: 10px;
 	}
 }

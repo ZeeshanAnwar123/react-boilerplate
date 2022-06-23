@@ -1,18 +1,18 @@
-import { FETCH_CATEGORIES } from '../types';
+import { FETCH_CALCULATORS } from '../types';
 
 const initialState = {
-	categories: 'idle',
+	calculators: 'idle',
 };
 
-export default function categoryReducer(
+export default function calculatorReducer(
 	state = initialState,
 	{ type, payload }
 ) {
 	switch (type) {
-		case FETCH_CATEGORIES:
+		case FETCH_CALCULATORS:
 			return {
 				...state,
-				categories: payload,
+				calculators: payload,
 			};
 		default:
 			return {

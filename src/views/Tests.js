@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import firebase from '../config/firebase';
 import {
 	Col,
 	Row,
@@ -9,24 +10,43 @@ import {
 	FormGroup,
 	Label,
 	Spinner,
+	Form,
 } from 'reactstrap';
 import { addCategory, fetchCategories } from '../store/actions/categoryAction';
+import { addTest, fetchTest } from '../store/actions/testsAction';
 
 const Tests = () => {
 	let [activeCategory, setActiveCategory] = useState(null);
 	let [isNewCategory, setIsNewCategory] = useState(false);
+	let [addLoading, setAddLoading] = useState(false);
 	let [category, setCategory] = useState({
 		categoryColor: '#000000',
 		categoryIcon: '',
 		categoryId: '',
 		categoryName: '',
-		contentType: 2,
+		contentType: 1,
 		section: 0,
 		timeInterval: 0,
 	});
+	const handleCalculatorSubmit = async e => {
+		e.preventDefault();
+		setAddLoading(true);
+		let _section =
+			section == 'Business' ? 0 : section == 'Personal' ? 1 : -1;
+		contents = contents.map(content => {
+			content.section = _section;
+			content.categoryId = activeCategory.categoryId;
+			return content;
+		});
+		await dispatch(
+			addTest(contents, _section, 1, activeCategory.categoryId)
+		);
+		setAddLoading(false);
+	};
 	let [contents, setContents] = useState([]);
 	let [section, setSection] = useState('');
 	let _category = useSelector(state => state.category);
+	let { tests } = useSelector(state => state.test);
 	let dispatch = useDispatch();
 	const handleSaveCategory = async () => {
 		if (
@@ -46,7 +66,7 @@ const Tests = () => {
 				categoryIcon: '',
 				categoryId: '',
 				categoryName: '',
-				contentType: 2,
+				contentType: 1,
 				section:
 					section == 'Business' ? 0 : section == 'Personal' ? 1 : -1,
 				timeInterval: 0,
@@ -64,7 +84,7 @@ const Tests = () => {
 			setActiveCategory(null);
 			dispatch(
 				fetchCategories({
-					contentType: 2,
+					contentType: 1,
 					section:
 						section == 'Business'
 							? 0
@@ -75,6 +95,26 @@ const Tests = () => {
 			);
 		}
 	}, [section]);
+	useEffect(() => {
+		if (activeCategory != null) {
+			dispatch(
+				fetchTest({
+					section:
+						section == 'Business'
+							? 0
+							: section == 'Personal'
+							? 1
+							: -1,
+					categoryId: activeCategory.categoryId,
+				})
+			);
+		}
+	}, [activeCategory]);
+	useEffect(() => {
+		if (!(tests == 'idle' || tests == 'loading')) {
+			setContents(tests);
+		}
+	}, [tests]);
 	return (
 		<>
 			<Row>
@@ -150,7 +190,9 @@ const Tests = () => {
 									<div
 										onClick={() => setActiveCategory(tab)}
 										className={`tab fw-500 fs-17 w-100 ${
-											tab.categoryId == activeCategory
+											activeCategory &&
+											tab.categoryId ==
+												activeCategory.categoryId
 												? 'tab--active'
 												: ''
 										}`}
@@ -164,6 +206,7 @@ const Tests = () => {
 						{isNewCategory ? (
 							<div className='d-flex align-items-center category__input mt-1'>
 								<Input
+									required
 									value={category.categoryName}
 									onChange={e =>
 										setCategory(prevState => {
@@ -190,103 +233,185 @@ const Tests = () => {
 					</Col>
 					{activeCategory != null && (
 						<Col>
-							<div className='bg-white w-100 rounded py-4 h-100'>
-								<div className='d-flex'>
-									<div className='tab__title ml-auto'>
-										{activeCategory.categoryName}
-									</div>
+							{tests == 'idle' ||
+							tests == 'loading' ||
+							addLoading ? (
+								<div className='d-flex bg-white rounded align-items-center justify-content-center py-4'>
+									<Spinner />
 								</div>
-								<Container fluid className='mt-3'>
-									{contents.map((content, key) => (
-										<Row
-											key={'Content' + key}
-											className='align-items-center mb-2'
-										>
-											<Col xs='6'>
-												<Input
-													type='text'
-													className='calculator__input fs-17 fw-500'
-													placeholder='Content Type'
-													value={content.content}
-													onChange={e =>
-														setContents(
-															prevState => {
-																prevState[
-																	key
-																].content =
-																	e.target.value;
-																return [
-																	...prevState,
-																];
-															}
-														)
-													}
-												/>
-											</Col>
-											<Col xs='5'>
-												<Input
-													type='text'
-													className='calculator__input fs-17 fw-500'
-													placeholder='URL'
-													value={content.url}
-													onChange={e =>
-														setContents(
-															prevState => {
-																prevState[
-																	key
-																].url =
-																	e.target.value;
-																return [
-																	...prevState,
-																];
-															}
-														)
-													}
-												/>
-											</Col>
-											<Col xs='1'>
-												<svg
-													width='11'
-													height='11'
-													viewBox='0 0 11 11'
-													fill='none'
-													xmlns='http://www.w3.org/2000/svg'
-													onClick={e =>
-														removeContent(key)
-													}
-													className='cursor-pointer'
+							) : (
+								<Form onSubmit={handleCalculatorSubmit}>
+									<div className='bg-white w-100 rounded py-4 h-100'>
+										<div className='d-flex'>
+											<div className='tab__title ml-auto'>
+												{activeCategory.categoryName}
+											</div>
+										</div>
+										<Container fluid className='mt-3'>
+											{contents.map((content, key) => (
+												<Row
+													key={'Content' + key}
+													className='align-items-center mb-2'
 												>
-													<path
-														d='M7.2185 5.33317L10.2758 2.27583C10.7965 1.75517 10.7965 0.911167 10.2758 0.3905C9.75517 -0.130167 8.91117 -0.130167 8.3905 0.3905L5.33317 3.44783L2.27583 0.3905C1.75583 -0.130167 0.9105 -0.130167 0.3905 0.3905C-0.130167 0.911167 -0.130167 1.75517 0.3905 2.27583L3.44783 5.33317L0.3905 8.3905C-0.130167 8.91117 -0.130167 9.75517 0.3905 10.2758C0.6505 10.5365 0.991833 10.6665 1.33317 10.6665C1.6745 10.6665 2.01583 10.5365 2.27583 10.2758L5.33317 7.2185L8.3905 10.2758C8.65117 10.5365 8.99183 10.6665 9.33317 10.6665C9.6745 10.6665 10.0152 10.5365 10.2758 10.2758C10.7965 9.75517 10.7965 8.91117 10.2758 8.3905L7.2185 5.33317Z'
-														fill='#D2D2D2'
-													/>
-												</svg>
-											</Col>
-										</Row>
-									))}
-									<div className='d-flex mt-3 justify-content-end pb-4 mb-4'>
-										<button
-											onClick={() => {
-												setContents(prevState => [
-													...prevState,
-													{
-														content: '',
-														url: '',
-													},
-												]);
-											}}
-											className='calculator__btn calculator__btn--outlined fs-17 fw-500 mr-2'
-										>
-											Add New Calculator
-										</button>
-										<button className='calculator__btn fs-17 fw-500'>
-											Save
-										</button>
+													<Col xs='6'>
+														<Input
+															required
+															type='text'
+															className='calculator__input fs-17 fw-500'
+															placeholder='Content Type'
+															value={
+																content.title
+															}
+															onChange={e =>
+																setContents(
+																	prevState => {
+																		prevState[
+																			key
+																		].title =
+																			e.target.value;
+																		return [
+																			...prevState,
+																		];
+																	}
+																)
+															}
+														/>
+													</Col>
+													<Col xs='5'>
+														<Input
+															required
+															type='text'
+															className='calculator__input fs-17 fw-500'
+															placeholder='URL'
+															value={
+																content.contentUrl
+															}
+															onChange={e =>
+																setContents(
+																	prevState => {
+																		prevState[
+																			key
+																		].contentUrl =
+																			e.target.value;
+																		return [
+																			...prevState,
+																		];
+																	}
+																)
+															}
+														/>
+													</Col>
+													<Col xs='1'>
+														<svg
+															width='11'
+															height='11'
+															viewBox='0 0 11 11'
+															fill='none'
+															xmlns='http://www.w3.org/2000/svg'
+															onClick={e =>
+																removeContent(
+																	key
+																)
+															}
+															className='cursor-pointer'
+														>
+															<path
+																d='M7.2185 5.33317L10.2758 2.27583C10.7965 1.75517 10.7965 0.911167 10.2758 0.3905C9.75517 -0.130167 8.91117 -0.130167 8.3905 0.3905L5.33317 3.44783L2.27583 0.3905C1.75583 -0.130167 0.9105 -0.130167 0.3905 0.3905C-0.130167 0.911167 -0.130167 1.75517 0.3905 2.27583L3.44783 5.33317L0.3905 8.3905C-0.130167 8.91117 -0.130167 9.75517 0.3905 10.2758C0.6505 10.5365 0.991833 10.6665 1.33317 10.6665C1.6745 10.6665 2.01583 10.5365 2.27583 10.2758L5.33317 7.2185L8.3905 10.2758C8.65117 10.5365 8.99183 10.6665 9.33317 10.6665C9.6745 10.6665 10.0152 10.5365 10.2758 10.2758C10.7965 9.75517 10.7965 8.91117 10.2758 8.3905L7.2185 5.33317Z'
+																fill='#D2D2D2'
+															/>
+														</svg>
+													</Col>
+												</Row>
+											))}
+											<div className='d-flex mt-3 justify-content-end pb-4 mb-4'>
+												<button
+													type='button'
+													onClick={() => {
+														setContents(
+															prevState => [
+																...prevState,
+																{
+																	calculatorType:
+																		'',
+																	categoryId:
+																		'',
+																	content: [
+																		{
+																			bottomImage:
+																				'',
+																			bottomVideo:
+																				'',
+																			paragraphData:
+																				'',
+																			paragraphId:
+																				firebase
+																					.firestore()
+																					.collection(
+																						'paragraph'
+																					)
+																					.doc()
+																					.id,
+																			paragraphTitle:
+																				'',
+																			topImage:
+																				'',
+																			topVideo:
+																				'',
+																		},
+																	],
+																	contentType: 1,
+																	contentUrl:
+																		'',
+																	documentId:
+																		'',
+																	icon: '',
+																	primaryImage:
+																		'',
+																	secondaryImage:
+																		'',
+																	section:
+																		section ==
+																		'Business'
+																			? 0
+																			: section ==
+																			  'Personal'
+																			? 1
+																			: -1,
+																	thumbnail:
+																		'',
+																	thirdImage:
+																		'',
+																	timeInterval: 0,
+																	title: '',
+																	videoUrl:
+																		'',
+																},
+															]
+														);
+													}}
+													disabled={addLoading}
+													className='calculator__btn calculator__btn--outlined fs-17 fw-500 mr-2'
+												>
+													Add New Calculator
+												</button>
+												<button
+													type='submit'
+													className='calculator__btn fs-17 fw-500'
+													disabled={addLoading}
+												>
+													{addLoading ? (
+														<Spinner size='sm' />
+													) : (
+														'Save'
+													)}
+												</button>
+											</div>
+											<br />
+											<br />
+										</Container>
 									</div>
-									<br />
-									<br />
-								</Container>
-							</div>
+								</Form>
+							)}
 						</Col>
 					)}
 				</Row>
