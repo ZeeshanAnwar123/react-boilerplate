@@ -22,7 +22,10 @@ const FilePicker = ({ placeholder, value, onChange }) => {
 									: URL.createObjectURL(value)
 							}
 						/>
-						<div className='position-absolute image-icon image-icon--first'>
+						<div
+							className='position-absolute image-icon image-icon--first'
+							onClick={() => setSelectFileModal(true)}
+						>
 							<i className='fa fa-edit'></i>
 						</div>
 						<div
