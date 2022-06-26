@@ -301,7 +301,7 @@ const Learn = props => {
 										}
 									/>
 								</FormGroup>
-								{typeof tutorial.videoUrl == 'string' && (
+								{/* {typeof tutorial.videoUrl == 'string' && (
 									<FormGroup>
 										<Input
 											type='text'
@@ -321,11 +321,13 @@ const Learn = props => {
 											}}
 										/>
 									</FormGroup>
-								)}
+								)} */}
 							</div>
 						</Col>
 						<Col md='6'>
 							<CategoryDropdown
+								contentType={3}
+								section={3}
 								id={`CategoryDropdown${key}`}
 								placeholder='Select Category'
 								className='ml-auto'

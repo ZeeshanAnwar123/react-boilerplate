@@ -104,6 +104,10 @@ body {
 			margin-right: 28px;
 			object-fit: contain;
 		}
+		&--active{
+			background-color: #f5f5fb;
+			color:#000000
+		}
 	}
 }
 .main-content {

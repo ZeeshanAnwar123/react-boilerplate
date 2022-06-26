@@ -24,7 +24,7 @@ const Tests = () => {
 		categoryIcon: '',
 		categoryId: '',
 		categoryName: '',
-		contentType: 1,
+		contentType: 2,
 		section: 0,
 		timeInterval: 0,
 	});
@@ -66,7 +66,7 @@ const Tests = () => {
 				categoryIcon: '',
 				categoryId: '',
 				categoryName: '',
-				contentType: 1,
+				contentType: 2,
 				section:
 					section == 'Business' ? 0 : section == 'Personal' ? 1 : -1,
 				timeInterval: 0,
@@ -84,7 +84,7 @@ const Tests = () => {
 			setActiveCategory(null);
 			dispatch(
 				fetchCategories({
-					contentType: 1,
+					contentType: 2,
 					section:
 						section == 'Business'
 							? 0
@@ -359,7 +359,7 @@ const Tests = () => {
 																				'',
 																		},
 																	],
-																	contentType: 1,
+																	contentType: 2,
 																	contentUrl:
 																		'',
 																	documentId:
@@ -392,7 +392,7 @@ const Tests = () => {
 													disabled={addLoading}
 													className='calculator__btn calculator__btn--outlined fs-17 fw-500 mr-2'
 												>
-													Add New Calculator
+													Add New Test
 												</button>
 												<button
 													type='submit'

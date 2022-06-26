@@ -18,19 +18,47 @@ const Sidebar = () => {
 					<span>Dashboard</span>
 				</h5>
 			</div>
-			<Link to='/calculators' className='sidebar__item mt-3'>
+			<Link
+				to='/calculators'
+				className={`sidebar__item ${
+					window.location.pathname == '/calculators'
+						? 'sidebar__item--active'
+						: ''
+				} mt-3`}
+			>
 				<img className='sidebar__item__image' src={calculator} />
 				<span className='sidebar__item__text'>Calculators</span>
 			</Link>
-			<Link to='/articles' className='sidebar__item'>
+			<Link
+				to='/articles'
+				className={`sidebar__item ${
+					window.location.pathname == '/articles'
+						? 'sidebar__item--active'
+						: ''
+				}`}
+			>
 				<img className='sidebar__item__image' src={articles} />
 				<span className='sidebar__item__text'>Articles</span>
 			</Link>
-			<Link to='/tests' className='sidebar__item'>
+			<Link
+				to='/tests'
+				className={`sidebar__item ${
+					window.location.pathname == '/tests'
+						? 'sidebar__item--active'
+						: ''
+				}`}
+			>
 				<img className='sidebar__item__image' src={tests} />
 				<span className='sidebar__item__text'>Tests</span>
 			</Link>
-			<Link to='/learn' className='sidebar__item'>
+			<Link
+				to='/learn'
+				className={`sidebar__item ${
+					window.location.pathname == '/learn'
+						? 'sidebar__item--active'
+						: ''
+				}`}
+			>
 				<img className='sidebar__item__image' src={learn} />
 				<span className='sidebar__item__text'>Learn</span>
 			</Link>

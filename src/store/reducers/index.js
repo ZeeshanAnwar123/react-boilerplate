@@ -6,6 +6,7 @@ import categoryReducer from './categoryReducer';
 import calculatorReducer from './calculatorReducer';
 import courseReducer from './courseReducer';
 import testReducer from './testReducer';
+import articleReducer from './articleReducer';
 
 export let rootReducer = combineReducers({
 	authUser: authUserReducer,
@@ -13,6 +14,7 @@ export let rootReducer = combineReducers({
 	course: courseReducer,
 	calculator: calculatorReducer,
 	test: testReducer,
+	article: articleReducer,
 });
 
 export default rootReducer;

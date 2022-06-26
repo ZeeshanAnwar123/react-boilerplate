@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { Form, Input, Spinner } from 'reactstrap';
+import { Input, Spinner } from 'reactstrap';
 import { addCategory } from '../store/actions/categoryAction';
+import { toast } from 'react-toastify';
 
 const CategoryDropdown = ({
 	className,
@@ -11,6 +12,8 @@ const CategoryDropdown = ({
 	placeholder,
 	item_value = 'value',
 	item_text = 'text',
+	contentType,
+	section,
 	onChange = () => {},
 }) => {
 	let [isOpen, setIsOpen] = useState(false);
@@ -21,8 +24,8 @@ const CategoryDropdown = ({
 		categoryIcon: '',
 		categoryId: '',
 		categoryName: '',
-		contentType: 3,
-		section: 3,
+		contentType,
+		section,
 		timeInterval: 0,
 	});
 	let dispatch = useDispatch();
@@ -55,17 +58,21 @@ const CategoryDropdown = ({
 	}, []);
 	const handleCategorySubmit = e => {
 		e.preventDefault();
-		dispatch(addCategory(category));
-		setIsAdd(false);
-		setCategory({
-			categoryColor: '#000000',
-			categoryIcon: '',
-			categoryId: '',
-			categoryName: '',
-			contentType: 3,
-			section: 3,
-			timeInterval: 0,
-		});
+		if (category.categoryName != '') {
+			dispatch(addCategory(category));
+			setIsAdd(false);
+			setCategory({
+				categoryColor: '#000000',
+				categoryIcon: '',
+				categoryId: '',
+				categoryName: '',
+				contentType,
+				section,
+				timeInterval: 0,
+			});
+		} else {
+			toast.error('Category name is required!!!');
+		}
 	};
 	return (
 		<div
@@ -117,10 +124,7 @@ const CategoryDropdown = ({
 							</div>
 						))}
 						{isAdd ? (
-							<Form
-								onSubmit={handleCategorySubmit}
-								className='category-dropdown__menu__item px-0 d-flex align-items-center'
-							>
+							<div className='category-dropdown__menu__item px-0 d-flex align-items-center'>
 								<Input
 									size='sm'
 									className='h-auto border-0 bg-transparent shadow-none outline-none'
@@ -159,16 +163,21 @@ const CategoryDropdown = ({
 									></input>
 								</label>
 								<button
-									type='submit'
+									onClick={handleCategorySubmit}
 									className='ml-3 category-dropdown__icon cursor-pointer h-100'
 								>
 									<i className='fa fa-plus'></i>
 								</button>
-							</Form>
+							</div>
 						) : (
 							<div
 								className='category-dropdown__menu__item mt-2 d-flex align-items-center'
-								onClick={() => setIsAdd(true)}
+								onClick={() => {
+									setIsAdd(true);
+									window.setTimeout(() => {
+										setIsOpen(true);
+									}, 100);
+								}}
 							>
 								Add New Category
 							</div>
