@@ -103,87 +103,45 @@ const More = props => {
 			videoUrl: '',
 		});
 	};
-	const handleTutorialFile = files => {
-		let possibleImageTypes = ['gif', 'png', 'bmp', 'jpeg', 'jpg'];
-		let possibleVideoTypes = ['mp4', 'mov', 'wmv', 'flv', 'avi', 'webm'];
-		if (files.length == 0) {
+	const handleTutorialFile = value => {
+		if (Array.isArray(value) && value.length == 0) {
 			setTutorial(prevState => {
 				prevState.primaryImage = '';
 				prevState.videoUrl = '';
 				return { ...prevState };
 			});
-			return;
+		} else {
+			setTutorial(prevState => {
+				if (value.image != '') {
+					prevState.primaryImage = value.image;
+					prevState.videoUrl = '';
+				} else if (value.video != '') {
+					prevState.videoUrl = value.video;
+					prevState.primaryImage = '';
+				}
+				return { ...prevState };
+			});
 		}
-		if (files.length != 1) {
-			toast.error('Only 1 file is allowed!!!');
-			return;
-		}
-		let file = files[0];
-		let parts = file.name.split('.');
-		let ext = parts[parts.length - 1];
-		if (
-			!possibleImageTypes.includes(ext.toLowerCase()) &&
-			!possibleVideoTypes.includes(ext.toLowerCase())
-		) {
-			toast.error(
-				`Only files with ${possibleImageTypes.join(
-					', '
-				)}, ${possibleVideoTypes.join(', ')} extensions are allowed!!!`
-			);
-			return;
-		}
-		setTutorial(prevState => {
-			if (possibleImageTypes.includes(ext.toLowerCase())) {
-				prevState.primaryImage = file;
-				prevState.videoUrl = '';
-			}
-			if (possibleVideoTypes.includes(ext.toLowerCase())) {
-				prevState.videoUrl = file;
-				prevState.primaryImage = '';
-			}
-			return { ...prevState };
-		});
 	};
-	const handleContentFile = (files, key) => {
-		let possibleImageTypes = ['gif', 'png', 'bmp', 'jpeg', 'jpg'];
-		let possibleVideoTypes = ['mp4', 'mov', 'wmv', 'flv', 'avi', 'webm'];
-		if (files.length == 0) {
+	const handleContentFile = (value, key) => {
+		if (Array.isArray(value) && value.length == 0) {
 			setTutorial(prevState => {
 				prevState.content[key].bottomImage = '';
 				prevState.content[key].bottomVideo = '';
 				return { ...prevState };
 			});
-			return;
+		} else {
+			setTutorial(prevState => {
+				if (value.image != '') {
+					prevState.content[key].bottomImage = value.image;
+					prevState.content[key].bottomVideo = '';
+				} else if (value.video != '') {
+					prevState.content[key].bottomImage = '';
+					prevState.content[key].bottomVideo = value.video;
+				}
+				return { ...prevState };
+			});
 		}
-		if (files.length != 1) {
-			toast.error('Only 1 file is allowed!!!');
-			return;
-		}
-		let file = files[0];
-		let parts = file.name.split('.');
-		let ext = parts[parts.length - 1];
-		if (
-			!possibleImageTypes.includes(ext.toLowerCase()) &&
-			!possibleVideoTypes.includes(ext.toLowerCase())
-		) {
-			toast.error(
-				`Only files with ${possibleImageTypes.join(
-					', '
-				)}, ${possibleVideoTypes.join(', ')} extensions are allowed!!!`
-			);
-			return;
-		}
-		setTutorial(prevState => {
-			if (possibleImageTypes.includes(ext.toLowerCase())) {
-				prevState.content[key].bottomImage = file;
-				prevState.content[key].bottomVideo = '';
-			}
-			if (possibleVideoTypes.includes(ext.toLowerCase())) {
-				prevState.content[key].bottomImage = '';
-				prevState.content[key].bottomVideo = file;
-			}
-			return { ...prevState };
-		});
 	};
 	useEffect(() => {
 		dispatch(
@@ -215,11 +173,21 @@ const More = props => {
 							<Col md='6'>
 								<div className='mt-4'>
 									<FilePicker
-										onChange={files =>
-											handleTutorialFile(files)
+										onChange={value =>
+											handleTutorialFile(value)
 										}
+										onSave={value => {
+											setTutorial(prevState => {
+												prevState.primaryImage = '';
+												prevState.videoUrl = value;
+												return { ...prevState };
+											});
+										}}
+										urlValue={tutorial.videoUrl}
+										videoValue={tutorial.videoUrl}
 										value={tutorial.primaryImage}
 										placeholder='Upload Image or Video'
+										accepts={['video', 'image']}
 									/>
 								</div>
 							</Col>
@@ -383,11 +351,21 @@ const More = props => {
 								<Col md='6'>
 									<div className='mt-4'>
 										<FilePicker
-											onChange={files =>
-												handleContentFile(files, key)
+											onChange={value =>
+												handleContentFile(value, key)
 											}
+											onSave={value => {
+												setTutorial(prevState => {
+													prevState.primaryImage = '';
+													prevState.videoUrl = value;
+													return { ...prevState };
+												});
+											}}
+											urlValue={content.bottomVideo}
+											videoValue={content.bottomVideo}
 											value={content.bottomImage}
 											placeholder='Upload Image or Video'
+											accepts={['video', 'image']}
 										/>
 									</div>
 								</Col>

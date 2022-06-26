@@ -1,17 +1,54 @@
 import DropZone from 'react-dropzone';
 import Upload from '../assets/img/upload.png';
-import { Modal, ModalBody, FormGroup, Input } from 'reactstrap';
+import { Modal, ModalBody, FormGroup, Input, Spinner } from 'reactstrap';
 import { useState } from 'react';
+import { toast } from 'react-toastify';
+import captureVideoFrame from 'capture-video-frame';
 
-const FilePicker = ({ placeholder, value, onChange }) => {
+const FilePicker = ({
+	placeholder,
+	value = '',
+	onChange,
+	accepts = [],
+	onSave,
+	urlValue = '',
+	videoValue = '',
+}) => {
 	let [selectFileModal, setSelectFileModal] = useState(false);
+	let [url, setUrl] = useState(urlValue);
+	let [isGeneratingThumbnail, setIsGeneratingThumbnail] = useState(false);
 	return (
 		<>
+			{isGeneratingThumbnail && (
+				<div
+					className='position-fixed d-flex align-items-center justify-content-center'
+					style={{
+						height: '100vh',
+						width: '100vw',
+						top: 0,
+						left: 0,
+						zIndex: 99999,
+						background: 'rgba(255,255,255, 0.95)',
+					}}
+				>
+					<div className='d-flex flex-column align-items-center'>
+						<Spinner />
+						<span className='d-block mt-3'>
+							Generating Thumbnail
+						</span>
+					</div>
+				</div>
+			)}
 			<div
 				className='rounded w-100 bg-white upload d-flex align-items-center justify-content-center'
-				onClick={() => (value ? {} : setSelectFileModal(true))}
+				onClick={() => {
+					console.log({ value, videoValue });
+					if (value == '' && videoValue == '') {
+						setSelectFileModal(true);
+					}
+				}}
 			>
-				{value ? (
+				{value && value != '' ? (
 					<div className='d-flex w-100 h-100 position-relative'>
 						<img
 							className='w-100 h-100'
@@ -22,6 +59,32 @@ const FilePicker = ({ placeholder, value, onChange }) => {
 									: URL.createObjectURL(value)
 							}
 						/>
+						<div
+							className='position-absolute image-icon image-icon--first'
+							onClick={() => setSelectFileModal(true)}
+						>
+							<i className='fa fa-edit'></i>
+						</div>
+						<div
+							className='position-absolute image-icon image-icon--second'
+							onClick={() => onChange([])}
+						>
+							<i className='fa fa-times'></i>
+						</div>
+					</div>
+				) : videoValue && videoValue != '' ? (
+					<div className='d-flex w-100 h-100 position-relative'>
+						{typeof videoValue == 'string' ? (
+							<img
+								className='w-100 h-100'
+								style={{ objectFit: 'cover' }}
+								src={videoValue}
+							/>
+						) : (
+							<video className='w-100'>
+								<source src={URL.createObjectURL(videoValue)} />
+							</video>
+						)}
 						<div
 							className='position-absolute image-icon image-icon--first'
 							onClick={() => setSelectFileModal(true)}
@@ -54,7 +117,116 @@ const FilePicker = ({ placeholder, value, onChange }) => {
 					<div className='py-5 mt-2'>
 						<DropZone
 							onDrop={files => {
-								onChange(files);
+								let possibleImageTypes = [
+									'gif',
+									'png',
+									'bmp',
+									'jpeg',
+									'jpg',
+								];
+								let possibleVideoTypes = [
+									'mp4',
+									'mov',
+									'wmv',
+									'flv',
+									'avi',
+									'webm',
+								];
+								let isError = false;
+								let file = files[0];
+								let parts = file.name.split('.');
+								let ext = parts[parts.length - 1];
+								if (files.length == 0) {
+									return [];
+								}
+								if (files.length != 1) {
+									toast.error('Only 1 file is allowed!!!');
+									isError = true;
+									return;
+								}
+								if (!isError) {
+									if (
+										accepts.includes('image') &&
+										accepts.includes('video')
+									) {
+										console.log(accepts);
+										if (
+											!possibleImageTypes.includes(
+												ext.toLowerCase()
+											) &&
+											!possibleVideoTypes.includes(
+												ext.toLowerCase()
+											)
+										) {
+											isError = true;
+										}
+									} else if (
+										accepts.includes('image') &&
+										!possibleImageTypes.includes(
+											ext.toLowerCase()
+										)
+									) {
+										isError = true;
+									} else if (
+										accepts.includes('video') &&
+										!possibleVideoTypes.includes(
+											ext.toLowerCase()
+										)
+									) {
+										isError = true;
+										console.log({ isError });
+									}
+								}
+								if (isError) {
+									toast.error(
+										`Only files with ${possibleImageTypes.join(
+											', '
+										)}, ${possibleVideoTypes.join(
+											', '
+										)} extensions are allowed!!!`
+									);
+								} else {
+									let obj = {};
+									if (
+										possibleImageTypes.includes(
+											ext.toLowerCase()
+										)
+									) {
+										obj.image = file;
+										obj.video = '';
+										obj.videoThumbnail = '';
+										onChange(obj);
+									} else if (
+										possibleVideoTypes.includes(
+											ext.toLowerCase()
+										)
+									) {
+										let video =
+											document.createElement('video');
+										let source =
+											document.createElement('source');
+										source.src = URL.createObjectURL(file);
+										video.id = 'my-video';
+										video.appendChild(source);
+										document.body.appendChild(video);
+										setIsGeneratingThumbnail(true);
+										window.setTimeout(() => {
+											const frame = captureVideoFrame(
+												'my-video',
+												'png'
+											);
+											obj.image = '';
+											obj.video = file;
+											obj.videoThumbnail = frame.dataUri;
+
+											document
+												.getElementById('my-video')
+												.remove();
+											setIsGeneratingThumbnail(false);
+											onChange(obj);
+										}, 2000);
+									}
+								}
 								setSelectFileModal(false);
 							}}
 						>
@@ -113,13 +285,17 @@ const FilePicker = ({ placeholder, value, onChange }) => {
 								</div>
 							)}
 						</DropZone>
-						<FormGroup className='mt-3'>
-							<Input
-								required
-								placeholder='Enter URL'
-								style={{ resize: 'none' }}
-							/>
-						</FormGroup>
+						{accepts.includes('video') && (
+							<FormGroup className='mt-3'>
+								<Input
+									required
+									placeholder='Enter URL'
+									style={{ resize: 'none' }}
+									onChange={e => setUrl(e.target.value)}
+									value={url}
+								/>
+							</FormGroup>
+						)}
 						<div className='d-flex justify-content-center pt-5'>
 							<button
 								className='calculator__btn calculator__btn--outlined fs-17 fw-500 mr-2'
@@ -127,9 +303,23 @@ const FilePicker = ({ placeholder, value, onChange }) => {
 							>
 								Cancel
 							</button>
-							<button className='calculator__btn fs-17 fw-500'>
-								Save
-							</button>
+							{accepts.includes('video') && (
+								<button
+									onClick={() => {
+										if (url.includes('youtube.com')) {
+											onSave(url);
+											setUrl('');
+											setSelectFileModal(false);
+										} else
+											toast.error(
+												'Url must be a youtube video'
+											);
+									}}
+									className='calculator__btn fs-17 fw-500'
+								>
+									Save
+								</button>
+							)}
 						</div>
 					</div>
 				</ModalBody>

@@ -77,34 +77,19 @@ const Learn = props => {
 
 	let category = useSelector(state => state.category);
 
-	const handleCourseImage = files => {
-		let possibleFileTypes = ['gif', 'png', 'bmp', 'jpeg', 'jpg'];
-		if (files.length == 0) {
+	const handleCourseImage = value => {
+		console.log(value);
+		if (Array.isArray(value) && value.length == 0) {
 			setCourse(prevState => {
 				prevState.thumbnail = '';
 				return { ...prevState };
 			});
-			return;
+		} else {
+			setCourse(prevState => {
+				prevState.thumbnail = value.image;
+				return { ...prevState };
+			});
 		}
-		if (files.length != 1) {
-			toast.error('Only 1 file is allowed!!!');
-			return;
-		}
-		let file = files[0];
-		let parts = file.name.split('.');
-		let ext = parts[parts.length - 1];
-		if (!possibleFileTypes.includes(ext.toLowerCase())) {
-			toast.error(
-				`Only files with ${possibleFileTypes.join(
-					', '
-				)} extensions are allowed!!!`
-			);
-			return;
-		}
-		setCourse(prevState => {
-			prevState.thumbnail = file;
-			return { ...prevState };
-		});
 	};
 	const handlePublish = async e => {
 		e.preventDefault();
@@ -176,46 +161,26 @@ const Learn = props => {
 			},
 		]);
 	};
-	const handleTutorialFile = (files, key) => {
-		let possibleImageTypes = ['gif', 'png', 'bmp', 'jpeg', 'jpg'];
-		let possibleVideoTypes = ['mp4', 'mov', 'wmv', 'flv', 'avi', 'webm'];
-		if (files.length == 0) {
+	const handleTutorialFile = (value, key) => {
+		console.log(value);
+		if (Array.isArray(value) && value.length == 0) {
 			setTutorials(prevState => {
 				prevState[key].primaryImage = '';
 				prevState[key].videoUrl = '';
 				return [...prevState];
 			});
-			return;
+		} else {
+			setTutorials(prevState => {
+				if (value.image != '') {
+					prevState[key].primaryImage = value.image;
+					prevState[key].videoUrl = '';
+				} else if (value.video != '') {
+					prevState[key].videoUrl = value.video;
+					prevState[key].primaryImage = '';
+				}
+				return [...prevState];
+			});
 		}
-		if (files.length != 1) {
-			toast.error('Only 1 file is allowed!!!');
-			return;
-		}
-		let file = files[0];
-		let parts = file.name.split('.');
-		let ext = parts[parts.length - 1];
-		if (
-			!possibleImageTypes.includes(ext.toLowerCase()) &&
-			!possibleVideoTypes.includes(ext.toLowerCase())
-		) {
-			toast.error(
-				`Only files with ${possibleImageTypes.join(
-					', '
-				)}, ${possibleVideoTypes.join(', ')} extensions are allowed!!!`
-			);
-			return;
-		}
-		setTutorials(prevState => {
-			if (possibleImageTypes.includes(ext.toLowerCase())) {
-				prevState[key].primaryImage = file;
-				prevState[key].videoUrl = '';
-			}
-			if (possibleVideoTypes.includes(ext.toLowerCase())) {
-				prevState[key].videoUrl = file;
-				prevState[key].primaryImage = '';
-			}
-			return [...prevState];
-		});
 	};
 	useEffect(() => {
 		dispatch(fetchCategories({ contentType: 3, section: 3 }));
@@ -233,6 +198,7 @@ const Learn = props => {
 							value={course.thumbnail}
 							placeholder='Upload Image'
 							onChange={handleCourseImage}
+							accepts={['image']}
 						/>
 					</Col>
 					<Col md='6'>
@@ -279,11 +245,21 @@ const Learn = props => {
 						<Col md='6'>
 							<div className='mt-4'>
 								<FilePicker
-									onChange={files =>
-										handleTutorialFile(files, key)
+									onChange={value =>
+										handleTutorialFile(value, key)
 									}
+									onSave={value => {
+										setTutorials(prevState => {
+											prevState[key].primaryImage = '';
+											prevState[key].videoUrl = value;
+											return [...prevState];
+										});
+									}}
+									urlValue={tutorial.videoUrl}
+									videoValue={tutorial.videoUrl}
 									value={tutorial.primaryImage}
 									placeholder='Upload Image or Video'
+									accepts={['video', 'image']}
 								/>
 								<FormGroup className='mt-3'>
 									<Input
